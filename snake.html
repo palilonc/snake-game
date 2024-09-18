@@ -3,117 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gra w Węża</title>
+    <title>Wyszukiwarka Wiadomości</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #000;
-            color: #fff;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
-        canvas {
-            background-color: #111;
-            border: 1px solid #fff;
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .news-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <canvas id="snakeGame" width="400" height="400"></canvas>
 
-    <script>
-        const canvas = document.getElementById("snakeGame");
-        const ctx = canvas.getContext("2d");
-        const box = 20;
-        let snake = [];
-        snake[0] = { x: 9 * box, y: 10 * box };
-        let food = {
-            x: Math.floor(Math.random() * 19) * box,
-            y: Math.floor(Math.random() * 19) * box
-        };
-        let score = 0;
-        let d;
+<header>
+    <h1>Wyszukiwarka Wiadomości</h1>
+    <input type="text" id="search" placeholder="Wyszukaj wiadomości...">
+    <button onclick="searchNews()">Szukaj</button>
+</header>
 
-        document.addEventListener("keydown", direction);
+<div class="results" id="results"></div>
 
-        function direction(event) {
-            if (event.keyCode == 37 && d != "RIGHT") {
-                d = "LEFT";
-            } else if (event.keyCode == 38 && d != "DOWN") {
-                d = "UP";
-            } else if (event.keyCode == 39 && d != "LEFT") {
-                d = "RIGHT";
-            } else if (event.keyCode == 40 && d != "UP") {
-                d = "DOWN";
-            }
-        }
+<script>
+    function searchNews() {
+        const query = document.getElementById('search').value;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
 
-        function collision(newHead, snake) {
-            for (let i = 0; i < snake.length; i++) {
-                if (newHead.x == snake[i].x && newHead.y == snake[i].y) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        // Tutaj powinna być logika do pobierania wiadomości z API
+        // Na potrzeby przykładu, dodajemy statyczne wyniki
 
-        function drawGame() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const newsItems = [
+            { title: 'Wiadomość 1', description: 'Opis wiadomości 1' },
+            { title: 'Wiadomość 2', description: 'Opis wiadomości 2' },
+            { title: 'Wiadomość 3', description: 'Opis wiadomości 3' }
+        ];
 
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = i == 0 ? "#00FF00" : "#008000";
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                ctx.strokeStyle = "#000";
-                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-            }
+        newsItems.forEach(item => {
+            const newsItemDiv = document.createElement('div');
+            newsItemDiv.classList.add('news-item');
+            newsItemDiv.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
+            resultsDiv.appendChild(newsItemDiv);
+        });
+    }
+</script>
 
-            ctx.fillStyle = "#FF0000";
-            ctx.fillRect(food.x, food.y, box, box);
-
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
-
-            if (d == "LEFT") snakeX -= box;
-            if (d == "UP") snakeY -= box;
-            if (d == "RIGHT") snakeX += box;
-            if (d == "DOWN") snakeY += box;
-
-            if (snakeX == food.x && snakeY == food.y) {
-                score++;
-                food = {
-                    x: Math.floor(Math.random() * 19) * box,
-                    y: Math.floor(Math.random() * 19) * box
-                };
-            } else {
-                snake.pop();
-            }
-
-            let newHead = {
-                x: snakeX,
-                y: snakeY
-            };
-
-            if (
-                snakeX < 0 || snakeX >= canvas.width ||
-                snakeY < 0 || snakeY >= canvas.height ||
-                collision(newHead, snake)
-            ) {
-                clearInterval(game);
-                alert("Game Over! Twój wynik: " + score);
-                window.location.reload();
-            }
-
-            snake.unshift(newHead);
-
-            ctx.fillStyle = "#FFF";
-            ctx.font = "20px Arial";
-            ctx.fillText("Wynik: " + score, 5, canvas.height - 5);
-        }
-
-        let game = setInterval(drawGame, 100);
-    </script>
 </body>
 </html>
